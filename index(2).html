@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MELE Reviewer</title>
+<meta name="theme-color" content="#f7f2e9">
+<style>
+:root{
+  --bg:#f7f3ec;
+  --panel:#fffdf9;
+  --panel-soft:#f2eadf;
+  --navy:#18324d;
+  --navy-2:#27455f;
+  --text:#334052;
+  --muted:#7d8792;
+  --line:#e7ded2;
+  --accent:#bca388;
+  --good:#6a846f;
+  --bad:#b6675c;
+  --shadow:0 14px 34px rgba(24,50,77,.06);
+  --radius:20px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{min-height:100vh;display:grid;grid-template-columns:248px 1fr}
+.sidebar{
+  position:sticky;top:0;height:100vh;
+  background:#fbf8f2;border-right:1px solid var(--line);
+  padding:28px 18px;display:flex;flex-direction:column;
+}
+.logo{padding:4px 12px 28px}
+.logo-mark{
+  width:44px;height:44px;border:1px solid var(--navy);
+  border-radius:13px;display:grid;place-items:center;
+  font:700 15px Georgia,serif;color:var(--navy);margin-bottom:12px
+}
+.logo h1{
+  margin:0;font:700 24px Georgia,serif;
+  letter-spacing:.18em;color:var(--navy)
+}
+.logo small{
+  display:block;margin-top:5px;color:#9d8f7f;
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase
+}
+.nav-title{
+  padding:0 12px 8px;margin-top:10px;
+  font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#a29482
+}
+.nav button{
+  width:100%;border:0;background:transparent;color:#5d6a78;
+  text-align:left;padding:11px 12px;border-radius:12px;margin:3px 0
+}
+.nav button:hover{background:var(--panel-soft);color:var(--navy)}
+.nav button.active{background:var(--navy);color:white}
+.side-note{
+  margin-top:auto;border:1px solid var(--line);
+  background:linear-gradient(145deg,#f7eee2,#f1e7db);
+  border-radius:18px;padding:17px
+}
+.side-note b{display:block;font:600 17px Georgia,serif;color:var(--navy)}
+.side-note p{margin:7px 0 0;font-size:12px;line-height:1.6;color:#746f69}
+.main{min-width:0}
+.topbar{
+  height:76px;position:sticky;top:0;z-index:10;
+  background:rgba(255,253,249,.86);backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);display:flex;
+  align-items:center;justify-content:space-between;padding:0 34px
+}
+.top-left{display:flex;align-items:center;gap:14px}
+.menu-btn{display:none;border:0;background:none;font-size:22px;color:var(--navy)}
+.page-title{font-weight:650;color:var(--navy)}
+.top-actions{display:flex;align-items:center;gap:9px}
+.icon-btn{
+  min-width:40px;height:40px;border:1px solid var(--line);
+  border-radius:12px;background:var(--panel);color:var(--navy)
+}
+.profile{
+  display:flex;align-items:center;gap:8px;border:1px solid var(--line);
+  border-radius:13px;background:var(--panel);padding:5px 11px 5px 6px;
+  color:var(--navy);font-size:13px
+}
+.avatar{
+  width:30px;height:30px;border-radius:50%;background:var(--navy);
+  color:white;display:grid;place-items:center;font:16px Georgia,serif
+}
+.content{max-width:1450px;margin:auto;padding:34px}
+.hero{
+  display:flex;justify-content:space-between;gap:24px;align-items:flex-start;
+  margin-bottom:22px
+}
+.hero h2{margin:0;font:600 36px Georgia,serif;color:var(--navy)}
+.hero p{margin:8px 0 0;color:var(--muted)}
+.streak-card{
+  min-width:310px;background:var(--panel);border:1px solid var(--line);
+  border-radius:18px;padding:16px 18px;box-shadow:var(--shadow)
+}
+.streak-head{display:flex;justify-content:space-between;align-items:center}
+.streak-card small{color:var(--muted)}
+.streak-card b{font:26px Georgia,serif;color:var(--navy)}
+.days{display:grid;grid-template-columns:repeat(7,1fr);gap:7px;margin-top:10px}
+.day{text-align:center;font-size:10px;color:var(--muted)}
+.dot{
+  width:23px;height:23px;border-radius:50%;border:1px solid var(--line);
+  margin:5px auto 0;display:grid;place-items:center
+}
+.dot.on{background:var(--navy);border-color:var(--navy);color:white}
+.card{
+  background:var(--panel);border:1px solid var(--line);
+  border-radius:var(--radius);box-shadow:var(--shadow)
+}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);overflow:hidden;margin-bottom:20px}
+.stat{padding:20px}
+.stat:not(:last-child){border-right:1px solid var(--line)}
+.label{font-size:12px;color:var(--muted)}
+.value{font:34px Georgia,serif;color:var(--navy);margin-top:5px}
+.note{font-size:11px;color:var(--muted);margin-top:7px}
+.bar{height:7px;background:#ece7df;border-radius:99px;overflow:hidden;margin-top:12px}
+.bar i{display:block;height:100%;background:var(--navy);border-radius:99px}
+.layout{display:grid;grid-template-columns:1.12fr .88fr;gap:20px}
+.panel{padding:20px}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.panel-head h3{
+  margin:0;font-size:13px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--navy)
+}
+.link-btn{border:0;background:none;color:var(--navy);font-size:12px}
+.subject-row{
+  display:grid;grid-template-columns:1.3fr 1fr auto;
+  align-items:center;gap:18px;padding:14px 0;border-bottom:1px solid #eee7dd
+}
+.subject-row:last-child{border-bottom:0}
+.subject-main{display:flex;gap:11px;align-items:center}
+.subject-icon{
+  width:46px;height:46px;border-radius:14px;background:var(--panel-soft);
+  display:grid;place-items:center;color:var(--navy);font:20px Georgia,serif
+}
+.subject-meta b{display:block;color:var(--navy);font-size:14px}
+.subject-meta small{color:var(--muted);font-size:11px}
+.percent{font:22px Georgia,serif;color:var(--navy)}
+.activity{padding:13px 0;border-bottom:1px solid #eee7dd}
+.activity:last-child{border-bottom:0}
+.activity b{display:block;font-size:13px;color:var(--navy)}
+.activity small{font-size:11px;color:var(--muted)}
+.quick-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.quick-actions button{
+  border:1px solid var(--line);background:#fffdfa;color:var(--navy);
+  border-radius:13px;text-align:left;padding:14px
+}
+.quick-actions button:hover{background:#f8f0e6}
+.full{grid-column:1/-1}
+.empty{text-align:center;padding:36px;color:var(--muted);font-size:13px}
+.toolbar{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:16px}
+.toolbar input,.toolbar select{
+  border:1px solid var(--line);background:#fffdfa;border-radius:11px;
+  padding:10px 12px;color:#39485a;outline:none
+}
+.toolbar input{min-width:250px}
+.btn{
+  border:0;border-radius:11px;background:var(--navy);color:white;
+  padding:10px 14px;font-weight:650
+}
+.btn.soft{background:var(--panel-soft);color:var(--navy)}
+.btn.red{background:#f5e7e3;color:var(--bad)}
+.topic{
+  border:1px solid var(--line);border-radius:14px;background:#fffdfa;
+  padding:15px;margin-bottom:9px
+}
+.topic-top{display:flex;justify-content:space-between;align-items:center;gap:15px}
+.topic b{color:var(--navy);font-size:13px}
+.topic small{color:var(--muted)}
+.question{font:22px/1.5 Georgia,serif;color:var(--navy);margin:19px 0}
+.choice{
+  display:block;width:100%;border:1px solid var(--line);
+  background:#fffdfa;border-radius:12px;text-align:left;
+  padding:13px;margin:8px 0;color:#3b4858
+}
+.choice:hover{border-color:#c7b9a7}
+.choice.correct{background:#edf4ee;border-color:#9db3a2}
+.choice.wrong{background:#faece9;border-color:#d8a49d}
+.explain{
+  background:#faf3e9;border-left:3px solid var(--accent);
+  padding:12px 13px;border-radius:9px;margin-top:13px;
+  font-size:13px;line-height:1.55
+}
+.formula-card{
+  border:1px solid var(--line);border-radius:14px;
+  padding:15px;margin-bottom:9px;background:#fffdfa
+}
+.formula-card small{color:var(--muted)}
+.formula-card b{display:block;color:var(--navy);margin-top:3px}
+.formula-expr{font:24px Georgia,serif;color:var(--navy);margin:8px 0}
+.formula-card p{font-size:12px;color:var(--muted);margin:0}
+.timer-wrap{text-align:center;padding:18px}
+.clock{font:72px Georgia,serif;color:var(--navy);margin:20px}
+.timer-actions{display:flex;justify-content:center;gap:9px}
+.settings-row{
+  display:flex;justify-content:space-between;gap:15px;align-items:center;
+  border-bottom:1px solid #eee7dd;padding:16px 0
+}
+.settings-row:last-child{border-bottom:0}
+.settings-row b{display:block;color:var(--navy);font-size:13px}
+.settings-row small{display:block;color:var(--muted);margin-top:4px;font-size:11px}
+@media(max-width:1050px){
+  .stats{grid-template-columns:1fr 1fr}
+  .layout{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .hero{flex-direction:column}
+  .streak-card{width:100%}
+}
+@media(max-width:800px){
+  .app{grid-template-columns:1fr}
+  .sidebar{
+    position:fixed;left:0;top:0;z-index:20;width:248px;
+    transform:translateX(-100%);transition:.2s
+  }
+  .sidebar.open{transform:none}
+  .menu-btn{display:block}
+  .topbar{padding:0 20px}
+  .content{padding:22px}
+  .profile span{display:none}
+}
+@media(max-width:560px){
+  .stats{grid-template-columns:1fr}
+  .stat{border-right:0!important;border-bottom:1px solid var(--line)}
+  .stat:last-child{border-bottom:0}
+  .subject-row{grid-template-columns:1fr}
+  .quick-actions{grid-template-columns:1fr}
+  .clock{font-size:54px}
+  .hero h2{font-size:30px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo">
+      <div class="logo-mark">ME</div>
+      <h1>MELE</h1>
+      <small>Reviewer</small>
+    </div>
+
+    <div class="nav">
+      <div class="nav-title">Study</div>
+      <button class="active" data-view="dashboard">⌂ &nbsp; Dashboard</button>
+      <button data-view="syllabus">▤ &nbsp; PRC Syllabus</button>
+      <button data-view="formulas">ƒx &nbsp; Formula Bank</button>
+
+      <div class="nav-title">Practice</div>
+      <button data-view="practice">◎ &nbsp; Practice Arena</button>
+      <button data-view="mistakes">△ &nbsp; Mistake Bank</button>
+
+      <div class="nav-title">Tools</div>
+      <button data-view="timer">◷ &nbsp; Study Timer</button>
+      <button data-view="progress">▥ &nbsp; Progress</button>
+      <button data-view="settings">⚙ &nbsp; Settings</button>
+    </div>
+
+    <div class="side-note">
+      <b>Study with intention.</b>
+      <p>Small, consistent sessions are easier to sustain than trying to master everything at once.</p>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="top-left">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <div class="page-title" id="pageTitle">Dashboard</div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="soundBtn" title="Sound">🔊</button>
+        <div class="profile">
+          <div class="avatar">A</div>
+          <span>Ace</span>
+        </div>
+      </div>
+    </header>
+
+    <section class="content" id="content"></section>
+  </main>
+</div>
+
+<script>
+const subjects=[
+  {
+    id:"math", name:"Mathematics",
+    full:"Mathematics, Engineering Economics & Basic Engineering Sciences",
+    weight:35, icon:"ƒx",
+    topics:[
+      "Algebra & Algebraic Methods","Plane & Spherical Trigonometry",
+      "Analytic & Solid Geometry","Differential & Integral Calculus",
+      "Differential Equations","Advanced Engineering Mathematics",
+      "Probability & Statistics","Engineering Economics",
+      "Engineering Statics","Engineering Dynamics",
+      "Mechanics of Materials","Thermodynamics",
+      "Fluid Mechanics","Heat Transfer"
+    ]
+  },
+  {
+    id:"power", name:"Power Plant Engineering",
+    full:"Power Plant Engineering", weight:35, icon:"♨",
+    topics:[
+      "Power Plant Fundamentals & Energy Conversion","Steam Power Plants & Rankine Cycle",
+      "Boilers / Steam Generators","Steam Turbines","Condensers & Feedwater Systems",
+      "Internal Combustion Engines","Diesel Power Plants",
+      "Gas Turbine & Combined-Cycle Plants","Hydroelectric Power Plants",
+      "Geothermal Power Plants","Renewable & Non-Conventional Energy",
+      "Fuels, Combustion & Flue Gas","Pumps, Fans, Blowers & Compressors",
+      "Heat Exchangers & Cooling","Industrial Plant Engineering & Layout",
+      "Material Handling Equipment","Refrigeration Systems",
+      "Air Conditioning & Psychrometrics","Instrumentation & Control",
+      "Plant Utilities, Piping & Insulation","Energy Management & Auditing",
+      "Environmental Engineering","Industrial Safety",
+      "Plant Maintenance & Reliability"
+    ]
+  },
+  {
+    id:"machine", name:"Machine Design",
+    full:"Machine Design, Materials & Shop Practice",
+    weight:30, icon:"⚙",
+    topics:[
+      "Machine Design Fundamentals","Stress, Failure Theories & Design Factors",
+      "Shafts, Keys, Couplings & Torsion","Gears & Gear Trains",
+      "Bearings & Lubrication","Belts, Ropes, Chains & Sprockets",
+      "Springs","Bolted, Screwed & Riveted Joints","Welded Joints",
+      "Brakes, Clutches & Power Transmission","Flywheels & Governors",
+      "Mechanisms & Kinematics","Pressure Vessels & Piping Components",
+      "Engineering Materials & Selection","Ferrous & Non-Ferrous Metals",
+      "Polymers, Ceramics & Other Materials","Heat Treatment",
+      "Mechanical Testing","Manufacturing Processes","Machining & Machine Tools",
+      "Casting, Forming & Forging","Welding & Joining","Metrology & Inspection",
+      "Machine Shop Practice & Safety","Hydraulic & Pneumatic Systems"
+    ]
+  }
+];
+
+const questions=[
+  {
+    id:"q1",s:"math",t:"Differential & Integral Calculus",d:"Easy",
+    q:"If a function is differentiable at a point, which statement must be true?",
+    a:["It is continuous there.","It has a maximum there.","Its derivative is zero there.","It is periodic."],
+    c:0,e:"Differentiability at a point implies continuity at that point."
+  },
+  {
+    id:"q2",s:"math",t:"Engineering Statics",d:"Moderate",
+    q:"A 10 kN force acts at 30° above the horizontal. What is its horizontal component?",
+    a:["5.00 kN","8.66 kN","10.00 kN","17.32 kN"],
+    c:1,e:"Fx = F cos θ = 10 cos 30° = 8.66 kN."
+  },
+  {
+    id:"q3",s:"power",t:"Steam Power Plants & Rankine Cycle",d:"Easy",
+    q:"In an ideal Rankine cycle, the pump primarily performs:",
+    a:["Isentropic expansion","Isentropic compression","Constant-pressure heating","Constant-volume cooling"],
+    c:1,e:"The ideal pump process is modeled as isentropic compression of liquid water."
+  },
+  {
+    id:"q4",s:"power",t:"Internal Combustion Engines",d:"Easy",
+    q:"Which ideal air-standard cycle is commonly associated with a spark-ignition engine?",
+    a:["Diesel","Otto","Rankine","Brayton"],
+    c:1,e:"The Otto cycle is the idealized air-standard cycle for spark-ignition engines."
+  },
+  {
+    id:"q5",s:"machine",t:"Shafts, Keys, Couplings & Torsion",d:"Moderate",
+    q:"For a solid circular shaft in pure torsion, maximum shear stress varies with diameter as:",
+    a:["1/d","1/d²","1/d³","d³"],
+    c:2,e:"τmax = 16T/(πd³), so for fixed torque the stress varies inversely with d³."
+  },
+  {
+    id:"q6",s:"machine",t:"Bearings & Lubrication",d:"Easy",
+    q:"The primary purpose of a bearing is to:",
+    a:["Increase friction","Support relative motion while reducing friction","Store energy","Increase shaft temperature"],
+    c:1,e:"Bearings support loads and allow controlled relative motion with reduced friction."
+  },
+  {
+    id:"q7",s:"power",t:"Air Conditioning & Psychrometrics",d:"Moderate",
+    q:"On a standard psychrometric chart, dry-bulb temperature is represented by:",
+    a:["Horizontal lines","Vertical lines","Diagonal lines","Circular lines"],
+    c:1,e:"Dry-bulb temperature lines are vertical on a standard psychrometric chart."
+  },
+  {
+    id:"q8",s:"machine",t:"Engineering Materials & Selection",d:"Easy",
+    q:"Which property describes resistance to indentation or scratching?",
+    a:["Hardness","Ductility","Malleability","Elasticity"],
+    c:0,e:"Hardness is resistance to localized plastic deformation such as indentation or scratching."
+  }
+];
+
+const formulaBank=[
+  ["Thermodynamics","First Law, closed system","Q − W = ΔU","Establish the sign convention before solving."],
+  ["Fluid Mechanics","Continuity","ṁ = ρAV","For steady incompressible flow, AV is constant."],
+  ["Fluid Mechanics","Bernoulli","P/ρg + V²/2g + z = constant","Include pump, turbine and loss heads when appropriate."],
+  ["Heat Transfer","Conduction","Q̇ = kAΔT/L","For one-dimensional steady conduction through a plane wall."],
+  ["Heat Transfer","Convection","Q̇ = hA(Ts − T∞)","Use the appropriate convection coefficient."],
+  ["Machine Design","Torsional stress","τmax = 16T/(πd³)","For a solid circular shaft."],
+  ["Machine Design","Bending stress","σ = Mc/I","Maximum stress occurs at the outermost fiber."],
+  ["Statics","Moment","M = Fd⊥","Use the perpendicular distance to the force line of action."],
+  ["Engineering Economics","Simple interest","I = Pin","n is the number of interest periods."]
+];
+
+const KEY="mele_elegant_single_v1";
+let data=JSON.parse(localStorage.getItem(KEY)||"null") || {
+  progress:{}, attempts:0, correct:0, mistakes:[], seconds:0, streak:0
+};
+
+let soundOn=localStorage.getItem(KEY+"_sound")!=="off";
+let timerId=null;
+let timerSeconds=1500;
+let quiz={items:[],i:0,answered:false};
+
+const S=id=>subjects.find(x=>x.id===id);
+const K=(s,t)=>s+"::"+t;
+const save=()=>localStorage.setItem(KEY,JSON.stringify(data));
+
+function subjectProgress(s){
+  return Math.round(
+    s.topics.reduce((sum,t)=>sum+(data.progress[K(s.id,t)]||0),0)/s.topics.length
+  );
+}
+function overall(){
+  return Math.round(subjects.reduce((sum,s)=>sum+subjectProgress(s)*s.weight,0)/100);
+}
+function accuracy(){
+  return data.attempts?Math.round(data.correct/data.attempts*100):0;
+}
+function formatStudyTime(sec){
+  const h=Math.floor(sec/3600);
+  const m=Math.floor((sec%3600)/60);
+  return h ? `${h}h ${m}m` : `${m}m`;
+}
+function renderPage(view){
+  document.querySelectorAll(".nav button").forEach(
+    b=>b.classList.toggle("active",b.dataset.view===view)
+  );
+
+  const titles={
+    dashboard:"Dashboard",
+    syllabus:"PRC Syllabus",
+    formulas:"Formula Bank",
+    practice:"Practice Arena",
+    mistakes:"Mistake Bank",
+    timer:"Study Timer",
+    progress:"Progress",
+    settings:"Settings"
+  };
+
+  document.getElementById("pageTitle").textContent=titles[view]||"Dashboard";
+  document.getElementById("sidebar").classList.remove("open");
+
+  const renderers={
+    dashboard:renderDashboard,
+    syllabus:renderSyllabus,
+    formulas:renderFormulas,
+    practice:renderPractice,
+    mistakes:renderMistakes,
+    timer:renderTimer,
+    progress:renderProgress,
+    settings:renderSettings
+  };
+  renderers[view](document.getElementById("content"));
+}
+
+function renderDashboard(c){
+  const completed=Object.values(data.progress).filter(v=>v>=100).length;
+
+  c.innerHTML=`
+    <div class="hero">
+      <div>
+        <h2>Good evening, Ace.</h2>
+        <p>Keep your preparation steady, focused, and measurable.</p>
+      </div>
+
+      <div class="streak-card">
+        <div class="streak-head">
+          <div>
+            <small>Study streak</small><br>
+            <b>${data.streak} days</b>
+          </div>
+          <span>♨</span>
+        </div>
+
+        <div class="days">
+          ${["M","T","W","T","F","S","S"].map((d,i)=>`
+            <div class="day">
+              ${d}
+              <div class="dot ${i<data.streak?"on":""}">
+                ${i<data.streak?"✓":""}
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+
+    <div class="card stats">
+      <div class="stat">
+        <div class="label">Overall Progress</div>
+        <div class="value">${overall()}%</div>
+        <div class="bar"><i style="width:${overall()}%"></i></div>
+        <div class="note">${completed} topics completed</div>
+      </div>
+
+      <div class="stat">
+        <div class="label">Questions Answered</div>
+        <div class="value">${data.attempts}</div>
+        <div class="note">${data.correct} correct</div>
+      </div>
+
+      <div class="stat">
+        <div class="label">Average Accuracy</div>
+        <div class="value">${accuracy()}%</div>
+        <div class="note">${data.attempts?"Based on recorded practice":"No practice yet"}</div>
+      </div>
+
+      <div class="stat">
+        <div class="label">Study Time</div>
+        <div class="value">${formatStudyTime(data.seconds)}</div>
+        <div class="note">${data.seconds?"Saved locally":"Start a focus session"}</div>
+      </div>
+    </div>
+
+    <div class="layout">
+      <div class="card panel">
+        <div class="panel-head">
+          <h3>Subject Progress</h3>
+          <button class="link-btn" onclick="renderPage('syllabus')">View syllabus →</button>
+        </div>
+
+        ${subjects.map(s=>`
+          <div class="subject-row">
+            <div class="subject-main">
+              <div class="subject-icon">${s.icon}</div>
+              <div class="subject-meta">
+                <b>${s.name}</b>
+                <small>${s.weight}% of the examination</small>
+              </div>
+            </div>
+            <div class="bar"><i style="width:${subjectProgress(s)}%"></i></div>
+            <div class="percent">${subjectProgress(s)}%</div>
+          </div>
+        `).join("")}
+      </div>
+
+      <div class="card panel">
+        <div class="panel-head"><h3>Recent Activity</h3></div>
+
+        ${data.attempts||data.seconds ? `
+          <div class="activity">
+            <b>${data.attempts} practice answers recorded</b>
+            <small>${accuracy()}% current accuracy</small>
+          </div>
+          <div class="activity">
+            <b>${formatStudyTime(data.seconds)} study time</b>
+            <small>Saved in this browser</small>
+          </div>
+          <div class="activity">
+            <b>${data.mistakes.length} mistakes in your bank</b>
+            <small>Use them for targeted review</small>
+          </div>
+        ` : `
+          <div class="empty">Your activity will appear here as you study.</div>
+        `}
+      </div>
+
+      <div class="card panel full">
+        <div class="panel-head"><h3>Quick Actions</h3></div>
+        <div class="quick-actions">
+          <button onclick="renderPage('practice')">◎ &nbsp; Start Practice</button>
+          <button onclick="renderPage('syllabus')">▤ &nbsp; Browse Syllabus</button>
+          <button onclick="renderPage('formulas')">ƒx &nbsp; Review Formulas</button>
+          <button onclick="renderPage('timer')">◷ &nbsp; Begin Focus Session</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function renderSyllabus(c){
+  c.innerHTML=`
+    <div class="card panel">
+      <div class="panel-head"><h3>PRC-Aligned Study Map</h3></div>
+
+      <div class="toolbar">
+        <select id="subjectSelect" onchange="drawTopics()">
+          ${subjects.map(s=>`<option value="${s.id}">${s.name} — ${s.weight}%</option>`).join("")}
+        </select>
+        <input id="topicSearch" placeholder="Search a topic..." oninput="drawTopics()">
+      </div>
+
+      <div id="topicList"></div>
+
+      <div class="note">
+        Basis: PRC Board Resolution No. 57, Series of 2013. Topic labels are organized for study navigation.
+      </div>
+    </div>
+  `;
+  drawTopics();
+}
+
+function drawTopics(){
+  const s=S(document.getElementById("subjectSelect").value);
+  const q=(document.getElementById("topicSearch").value||"").toLowerCase();
+
+  document.getElementById("topicList").innerHTML=
+    s.topics
+      .filter(t=>t.toLowerCase().includes(q))
+      .map(t=>{
+        const p=data.progress[K(s.id,t)]||0;
+        return `
+          <div class="topic">
+            <div class="topic-top">
+              <div>
+                <b>${t}</b><br>
+                <small>${p}% complete</small>
+              </div>
+
+              <div>
+                <button class="btn soft"
+                  onclick='toggleTopic("${s.id}",${JSON.stringify(t)})'>
+                  ${p>=100?"Reset":"Mark studied"}
+                </button>
+
+                <button class="btn"
+                  onclick='practiceTopic("${s.id}",${JSON.stringify(t)})'>
+                  Practice
+                </button>
+              </div>
+            </div>
+
+            <div class="bar"><i style="width:${p}%"></i></div>
+          </div>
+        `;
+      }).join("") || `<div class="empty">No matching topics.</div>`;
+}
+
+function toggleTopic(sid,topic){
+  const key=K(sid,topic);
+  data.progress[key]=(data.progress[key]||0)>=100?0:100;
+  save();
+  drawTopics();
+}
+
+function practiceTopic(sid,topic){
+  renderPage("practice");
+  setTimeout(()=>startQuiz(sid,topic),0);
+}
+
+function renderPractice(c){
+  c.innerHTML=`
+    <div class="card panel">
+      <div class="panel-head"><h3>Practice Arena</h3></div>
+
+      <p class="note">
+        V1 includes a small diagnostic set to test the reviewer engine.
+        The question bank can be expanded in later versions.
+      </p>
+
+      <div class="toolbar">
+        <select id="practiceSubject">
+          <option value="all">All subjects</option>
+          ${subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join("")}
+        </select>
+
+        <select id="practiceDifficulty">
+          <option value="all">All difficulty</option>
+          <option>Easy</option>
+          <option>Moderate</option>
+        </select>
+
+        <button class="btn" onclick="startQuiz()">Start Practice</button>
+      </div>
+    </div>
+
+    <div style="height:16px"></div>
+    <div id="quizBox"></div>
+  `;
+}
+
+function startQuiz(forceSubject=null,forceTopic=null){
+  const s=forceSubject || document.getElementById("practiceSubject")?.value || "all";
+  const d=document.getElementById("practiceDifficulty")?.value || "all";
+
+  quiz.items=questions
+    .filter(q=>
+      (s==="all"||q.s===s) &&
+      (d==="all"||q.d===d) &&
+      (forceTopic ? q.t===forceTopic : true)
+    )
+    .sort(()=>Math.random()-.5);
+
+  quiz.i=0;
+  quiz.answered=false;
+  drawQuestion();
+}
+
+function drawQuestion(){
+  const q=quiz.items[quiz.i];
+
+  if(!q){
+    document.getElementById("quizBox").innerHTML=
+      `<div class="card empty">No question is available for that exact topic yet.</div>`;
+    return;
+  }
+
+  document.getElementById("quizBox").innerHTML=`
+    <div class="card panel">
+      <div class="panel-head">
+        <h3>${S(q.s).name} · ${q.t}</h3>
+        <span class="note">${quiz.i+1}/${quiz.items.length}</span>
+      </div>
+
+      <div class="question">${q.q}</div>
+
+      ${q.a.map((x,i)=>`
+        <button class="choice" onclick="answerQuestion(${i})">
+          ${String.fromCharCode(65+i)}. ${x}
+        </button>
+      `).join("")}
+
+      <div id="feedback"></div>
+    </div>
+  `;
+}
+
+function answerQuestion(i){
+  if(quiz.answered)return;
+  quiz.answered=true;
+
+  const q=quiz.items[quiz.i];
+  const ok=i===q.c;
+
+  data.attempts++;
+  if(ok) data.correct++;
+  else data.mistakes.push({id:q.id,s:q.s,t:q.t});
+
+  save();
+
+  document.querySelectorAll(".choice").forEach((b,n)=>{
+    if(n===q.c)b.classList.add("correct");
+    if(n===i&&!ok)b.classList.add("wrong");
+  });
+
+  document.getElementById("feedback").innerHTML=`
+    <div class="explain">
+      <b>${ok?"Correct.":"Review this concept."}</b><br>
+      ${q.e}
+    </div>
+
+    <div style="margin-top:12px">
+      <button class="btn" onclick="nextQuestion()">
+        ${quiz.i+1===quiz.items.length?"Finish":"Next question"}
+      </button>
+    </div>
+  `;
+}
+
+function nextQuestion(){
+  quiz.i++;
+  quiz.answered=false;
+
+  if(quiz.i>=quiz.items.length){
+    document.getElementById("quizBox").innerHTML=`
+      <div class="card empty">
+        <b style="color:var(--navy)">Practice complete.</b>
+        <p>Your result has been saved locally.</p>
+        <button class="btn" onclick="renderPage('dashboard')">Back to Dashboard</button>
+      </div>
+    `;
+  }else{
+    drawQuestion();
+  }
+}
+
+function renderFormulas(c){
+  c.innerHTML=`
+    <div class="card panel">
+      <div class="panel-head"><h3>Formula Bank</h3></div>
+
+      <div class="toolbar">
+        <input id="formulaSearch" placeholder="Search formulas..." oninput="drawFormulas()">
+      </div>
+
+      <div id="formulaList"></div>
+    </div>
+  `;
+  drawFormulas();
+}
+
+function drawFormulas(){
+  const q=(document.getElementById("formulaSearch")?.value||"").toLowerCase();
+
+  document.getElementById("formulaList").innerHTML=
+    formulaBank
+      .filter(x=>x.join(" ").toLowerCase().includes(q))
+      .map(x=>`
+        <div class="formula-card">
+          <small>${x[0]}</small>
+          <b>${x[1]}</b>
+          <div class="formula-expr">${x[2]}</div>
+          <p>${x[3]}</p>
+        </div>
+      `).join("") || `<div class="empty">No matching formula.</div>`;
+}
+
+function renderMistakes(c){
+  if(!data.mistakes.length){
+    c.innerHTML=`
+      <div class="card empty">
+        <b style="color:var(--navy)">No mistakes recorded yet.</b>
+        <p>Wrong answers from Practice Arena will appear here.</p>
+      </div>
+    `;
+    return;
+  }
+
+  c.innerHTML=`
+    <div class="card panel">
+      <div class="panel-head"><h3>Mistake Bank</h3></div>
+
+      ${data.mistakes.slice().reverse().map(m=>{
+        const q=questions.find(x=>x.id===m.id);
+        return q?`
+          <div class="topic">
+            <b>${q.q}</b><br>
+            <small>${S(q.s).name} · ${q.t}</small>
+            <div class="explain">${q.e}</div>
+          </div>
+        `:"";
+      }).join("")}
+    </div>
+  `;
+}
+
+function formatTimer(s){
+  return String(Math.floor(s/60)).padStart(2,"0")+":"+
+         String(s%60).padStart(2,"0");
+}
+
+function renderTimer(c){
+  c.innerHTML=`
+    <div class="card panel timer-wrap">
+      <div class="panel-head"><h3>Study Timer</h3></div>
+      <p class="note">A simple 25-minute focus session.</p>
+
+      <div class="clock" id="clock">${formatTimer(timerSeconds)}</div>
+
+      <div class="timer-actions">
+        <button class="btn" id="timerButton" onclick="toggleTimer()">Start</button>
+        <button class="btn soft" onclick="resetTimer()">Reset</button>
+      </div>
+    </div>
+  `;
+}
+
+function toggleTimer(){
+  if(timerId){
+    clearInterval(timerId);
+    timerId=null;
+    document.getElementById("timerButton").textContent="Resume";
+    return;
+  }
+
+  document.getElementById("timerButton").textContent="Pause";
+
+  timerId=setInterval(()=>{
+    timerSeconds--;
+    data.seconds++;
+    save();
+
+    const clock=document.getElementById("clock");
+    if(clock)clock.textContent=formatTimer(timerSeconds);
+
+    if(timerSeconds<=0){
+      clearInterval(timerId);
+      timerId=null;
+      data.streak=Math.max(1,data.streak+1);
+      save();
+      beep();
+
+      const b=document.getElementById("timerButton");
+      if(b)b.textContent="Start";
+    }
+  },1000);
+}
+
+function resetTimer(){
+  if(timerId)clearInterval(timerId);
+  timerId=null;
+  timerSeconds=1500;
+
+  const clock=document.getElementById("clock");
+  if(clock)clock.textContent=formatTimer(timerSeconds);
+
+  const b=document.getElementById("timerButton");
+  if(b)b.textContent="Start";
+}
+
+function beep(){
+  if(!soundOn)return;
+  try{
+    const a=new AudioContext();
+    const o=a.createOscillator();
+    const g=a.createGain();
+
+    o.connect(g);
+    g.connect(a.destination);
+
+    o.frequency.value=660;
+    g.gain.value=.05;
+
+    o.start();
+    o.stop(a.currentTime+.3);
+  }catch(e){}
+}
+
+function renderProgress(c){
+  c.innerHTML=`
+    <div class="card panel">
+      <div class="panel-head"><h3>Progress Overview</h3></div>
+
+      ${subjects.map(s=>`
+        <div class="subject-row">
+          <div class="subject-main">
+            <div class="subject-icon">${s.icon}</div>
+            <div class="subject-meta">
+              <b>${s.name}</b>
+              <small>
+                ${s.topics.filter(t=>(data.progress[K(s.id,t)]||0)>=100).length}
+                of ${s.topics.length} topics completed
+              </small>
+            </div>
+          </div>
+
+          <div class="bar"><i style="width:${subjectProgress(s)}%"></i></div>
+          <div class="percent">${subjectProgress(s)}%</div>
+        </div>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderSettings(c){
+  c.innerHTML=`
+    <div class="card panel">
+      <div class="panel-head"><h3>Settings</h3></div>
+
+      <div class="settings-row">
+        <div>
+          <b>Timer sound</b>
+          <small>Play a short sound when a focus session ends.</small>
+        </div>
+        <button class="btn soft" onclick="toggleSound()">${soundOn?"On":"Off"}</button>
+      </div>
+
+      <div class="settings-row">
+        <div>
+          <b>Local progress</b>
+          <small>Your progress is stored in this browser. No account is required.</small>
+        </div>
+        <button class="btn red" onclick="resetAll()">Reset data</button>
+      </div>
+
+      <div class="note" style="margin-top:15px">
+        MELE Reviewer · Elegant Single-File V1
+      </div>
+    </div>
+  `;
+}
+
+function toggleSound(){
+  soundOn=!soundOn;
+  localStorage.setItem(KEY+"_sound",soundOn?"on":"off");
+  document.getElementById("soundBtn").textContent=soundOn?"🔊":"🔇";
+  renderSettings(document.getElementById("content"));
+}
+
+function resetAll(){
+  if(confirm("Reset all saved progress, practice results, mistakes, and study time?")){
+    localStorage.removeItem(KEY);
+    location.reload();
+  }
+}
+
+document.querySelectorAll(".nav button").forEach(
+  b=>b.onclick=()=>renderPage(b.dataset.view)
+);
+
+document.getElementById("menuBtn").onclick=()=>{
+  document.getElementById("sidebar").classList.toggle("open");
+};
+
+document.getElementById("soundBtn").textContent=soundOn?"🔊":"🔇";
+
+renderPage("dashboard");
+</script>
+</body>
+</html>
