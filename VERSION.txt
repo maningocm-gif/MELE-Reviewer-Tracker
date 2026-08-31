@@ -1,3 +1,0 @@
-MELE Reviewer Tracker
-v1.3.0
-Stable feature release
