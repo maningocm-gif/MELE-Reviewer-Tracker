@@ -1,2 +1,0 @@
-MELE Reviewer v1.3.4
-Focused study workflow, source problem sets, mock exam review, trash, and Ace chat history.
